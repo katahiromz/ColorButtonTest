@@ -1,3 +1,6 @@
+// ColorButtonTest.cpp
+// Copyright (C) 2019 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>.
+// This file is public domain software.
 #include <windows.h>
 #include <commctrl.h>
 #include <windowsx.h>
@@ -83,7 +86,9 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         {
             if (s_color_button_1.DoChooseColor())
             {
+                s_bDialogInit = FALSE;
                 DoSetColorText(hwnd, edt1, s_color_button_1.GetColor());
+                s_bDialogInit = TRUE;
             }
         }
         break;
@@ -92,7 +97,9 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         {
             if (s_color_button_2.DoChooseColor())
             {
+                s_bDialogInit = FALSE;
                 DoSetColorText(hwnd, edt2, s_color_button_2.GetColor());
+                s_bDialogInit = TRUE;
             }
         }
         break;
