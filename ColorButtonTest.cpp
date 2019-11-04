@@ -104,7 +104,7 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         }
         break;
     case edt1:
-        if (codeNotify == EN_CHANGE)
+        if (codeNotify == EN_CHANGE || codeNotify == EN_KILLFOCUS)
         {
             char buf[64];
             GetDlgItemTextA(hwnd, edt1, buf, 64);
@@ -113,11 +113,18 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
             {
                 value = color_value_fix(value);
                 s_color_button_1.SetColor(value);
+
+                if (codeNotify == EN_KILLFOCUS)
+                {
+                    s_bDialogInit = FALSE;
+                    DoSetColorText(hwnd, edt1, value);
+                    s_bDialogInit = TRUE;
+                }
             }
         }
         break;
     case edt2:
-        if (codeNotify == EN_CHANGE)
+        if (codeNotify == EN_CHANGE || codeNotify == EN_KILLFOCUS)
         {
             char buf[64];
             GetDlgItemTextA(hwnd, edt2, buf, 64);
@@ -126,6 +133,13 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
             {
                 value = color_value_fix(value);
                 s_color_button_2.SetColor(value);
+
+                if (codeNotify == EN_KILLFOCUS)
+                {
+                    s_bDialogInit = FALSE;
+                    DoSetColorText(hwnd, edt2, value);
+                    s_bDialogInit = TRUE;
+                }
             }
         }
         break;
