@@ -1,32 +1,89 @@
-#include "color_button.hpp"
+#include <windows.h>
+#include <commctrl.h>
 #include <windowsx.h>
+#include "color_button.hpp"
+#include "color_value/color_value.h"
+#include <strsafe.h>
 
 static BOOL s_bDialogInit = FALSE;
 static COLOR_BUTTON s_color_button_1;
 static COLOR_BUTTON s_color_button_2;
 
+static void DoSetColorText(HWND hwnd, INT nItemID, COLORREF value)
+{
+    char buf[64];
+    value = color_value_fix(value);
+    color_value_store(buf, 64, value);
+    SetDlgItemText(hwnd, nItemID, buf);
+}
+
 static BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
     s_color_button_1.SetHWND(GetDlgItem(hwnd, psh1));
-    s_color_button_1.SetColor(RGB(255, 0, 0));
-
     s_color_button_2.SetHWND(GetDlgItem(hwnd, psh2));
+    s_color_button_1.SetColor(RGB(255, 0, 255));
     s_color_button_2.SetColor(RGB(0, 255, 0));
+
+    DoSetColorText(hwnd, edt1, s_color_button_1.GetColor());
+    DoSetColorText(hwnd, edt2, s_color_button_2.GetColor());
 
     s_bDialogInit = TRUE;
     return TRUE;
 }
 
+static void OnOK(HWND hwnd)
+{
+    char buf[64];
+
+    GetDlgItemTextA(hwnd, edt1, buf, 64);
+    uint32_t value1 = color_value_parse(buf);
+    if (value1 == uint32_t(-1))
+    {
+        SendDlgItemMessage(hwnd, edt1, EM_SETSEL, 0, -1);
+        SetFocus(GetDlgItem(hwnd, edt1));
+        MessageBox(hwnd, TEXT("Invalid color value"), NULL, MB_ICONERROR);
+        return;
+    }
+
+    GetDlgItemTextA(hwnd, edt2, buf, 64);
+    uint32_t value2 = color_value_parse(buf);
+    if (value2 == uint32_t(-1))
+    {
+        SendDlgItemMessage(hwnd, edt2, EM_SETSEL, 0, -1);
+        SetFocus(GetDlgItem(hwnd, edt2));
+        MessageBox(hwnd, TEXT("Invalid color value"), NULL, MB_ICONERROR);
+        return;
+    }
+
+    TCHAR szText[128];
+    StringCbPrintf(szText, sizeof(szText), TEXT("#%06X, #%06X"), value1, value2);
+    MessageBox(hwnd, szText, TEXT("Color Values"), MB_ICONINFORMATION);
+
+    value1 = color_value_fix(value1);
+    value2 = color_value_fix(value2);
+
+    EndDialog(hwnd, IDOK);
+}
+
 static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
+    if (!s_bDialogInit)
+        return;
+
     switch (id)
     {
+    case IDOK:
+        OnOK(hwnd);
+        break;
+    case IDCANCEL:
+        EndDialog(hwnd, id);
+        break;
     case psh1:
         if (codeNotify == BN_CLICKED)
         {
             if (s_color_button_1.DoChooseColor())
             {
-                
+                DoSetColorText(hwnd, edt1, s_color_button_1.GetColor());
             }
         }
         break;
@@ -35,17 +92,34 @@ static void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         {
             if (s_color_button_2.DoChooseColor())
             {
+                DoSetColorText(hwnd, edt2, s_color_button_2.GetColor());
             }
         }
         break;
     case edt1:
         if (codeNotify == EN_CHANGE)
         {
+            char buf[64];
+            GetDlgItemTextA(hwnd, edt1, buf, 64);
+            uint32_t value = color_value_parse(buf);
+            if (value != uint32_t(-1))
+            {
+                value = color_value_fix(value);
+                s_color_button_1.SetColor(value);
+            }
         }
         break;
     case edt2:
         if (codeNotify == EN_CHANGE)
         {
+            char buf[64];
+            GetDlgItemTextA(hwnd, edt2, buf, 64);
+            uint32_t value = color_value_parse(buf);
+            if (value != uint32_t(-1))
+            {
+                value = color_value_fix(value);
+                s_color_button_2.SetColor(value);
+            }
         }
         break;
     }
@@ -83,6 +157,7 @@ WinMain(HINSTANCE   hInstance,
         LPSTR       lpCmdLine,
         INT         nCmdShow)
 {
+    InitCommonControls();
     DialogBox(hInstance, MAKEINTRESOURCE(1), NULL, DialogProc);
     return 0;
 }

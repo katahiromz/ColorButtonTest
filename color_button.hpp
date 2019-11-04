@@ -27,7 +27,7 @@ struct COLOR_BUTTON
         assert(GetWindowLong(hwndButton, GWL_STYLE) & BS_OWNERDRAW);
     }
 
-    void GetColor() const
+    COLORREF GetColor() const
     {
         return m_rgbColor;
     }
@@ -87,17 +87,16 @@ struct COLOR_BUTTON
 
     BOOL OnParentDrawItem(HWND hwnd, const DRAWITEMSTRUCT * lpDrawItem)
     {
-        if (m_hwndButton == NULL || m_hwndButton != pdis->hwndItem)
+        if (m_hwndButton == NULL || m_hwndButton != lpDrawItem->hwndItem)
             return FALSE;
 
-        LPDRAWITEMSTRUCT pdis = reinterpret_cast<LPDRAWITEMSTRUCT>(lParam);
-        if (pdis->CtlType != ODT_BUTTON)
+        if (lpDrawItem->CtlType != ODT_BUTTON)
             return FALSE;
 
-        HDC hdc = pdis->hDC;
-        BOOL bSelected = !!(pdis->itemState & ODS_SELECTED);
-        BOOL bFocus = !!(pdis->itemState & ODS_FOCUS);
-        RECT& rcItem = pdis->rcItem;
+        HDC hdc = lpDrawItem->hDC;
+        BOOL bSelected = !!(lpDrawItem->itemState & ODS_SELECTED);
+        BOOL bFocus = !!(lpDrawItem->itemState & ODS_FOCUS);
+        RECT rcItem = lpDrawItem->rcItem;
 
         ::DrawFrameControl(hdc, &rcItem, DFC_BUTTON,
             DFCS_BUTTONPUSH | (bSelected ? DFCS_PUSHED : 0));

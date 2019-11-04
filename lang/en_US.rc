@@ -8,19 +8,19 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 //////////////////////////////////////////////////////////////////////////////
 // RT_DIALOG
 
-1 DIALOG 0, 0, 214, 72
+1 DIALOG 0, 0, 260, 70
 CAPTION "ColorButtonTest"
-STYLE DS_MODALFRAME | WS_POPUPWINDOW | WS_CAPTION
+STYLE DS_CENTER | DS_MODALFRAME | WS_POPUPWINDOW | WS_CAPTION
 FONT 9, "Tahoma"
 {
+    LTEXT "Color &1:", -1, 5, 7, 32, 12
+    EDITTEXT edt1, 45, 5, 80, 14, ES_AUTOHSCROLL
+    CONTROL "", psh1, "BUTTON", BS_OWNERDRAW | WS_TABSTOP, 130, 5, 15, 15
+    LTEXT "Color &2:", -1, 5, 27, 32, 12
+    EDITTEXT edt2, 45, 25, 80, 14, ES_AUTOHSCROLL
+    CONTROL "", psh2, "BUTTON", BS_OWNERDRAW | WS_TABSTOP, 130, 25, 15, 15
     DEFPUSHBUTTON "OK", IDOK, 35, 52, 60, 14
     PUSHBUTTON "Cancel", IDCANCEL, 115, 52, 60, 14
-    LTEXT "Color &1:", -1, 5, 7, 32, 12
-    CONTROL "", psh1, "BUTTON", BS_OWNERDRAW | WS_TABSTOP, 85, 5, 15, 15
-    EDITTEXT edt1, 45, 5, 35, 14, ES_AUTOHSCROLL
-    LTEXT "Color &2:", -1, 5, 27, 32, 12
-    CONTROL "", psh2, "BUTTON", BS_OWNERDRAW | WS_TABSTOP, 85, 25, 15, 15
-    EDITTEXT edt2, 45, 25, 35, 14, ES_AUTOHSCROLL
 }
 
 //////////////////////////////////////////////////////////////////////////////

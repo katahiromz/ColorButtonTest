@@ -1,0 +1,3 @@
+[submodule "color_value"]
+	path = color_value
+	url = https://github.com/katahiromz/color_value.git
